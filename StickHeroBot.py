@@ -11,7 +11,7 @@ if len(devices) == 0:
 	quit()
 
 device = devices[0]
-
+sleep(30)
 # device.shell('input touchscreen swipe 534 1464 534 1464 350')
 while True:
 	image = device.screencap()
