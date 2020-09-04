@@ -1,14 +1,5 @@
-from bs4 import BeautifulSoup
-from requests import get
-from lxml import html
-from colorama import Fore
-from multiprocessing import Process
-
-
-# def main():
-# 	Process(target=fishing).start()
-# 	Process(target=tides).start()
-
+from pandas import read_html, set_option
+set_option('display.max_columns', None)
 
 def fishing():
 	# data = get('https://www.fishingreminder.com/IE/charts/fishing_times/Dublin')
@@ -108,8 +99,6 @@ def fishing():
 	#
 	# for row in rows:
 	# 	print(''.join(r'{: <5}'.format(d) for d in row))
-from pandas import read_html, set_option
-set_option('display.max_columns', None)
 
 def tides():
 	Fishing_times = read_html('https://www.fishingreminder.com/IE/charts/fishing_times/Dublin')[0]
