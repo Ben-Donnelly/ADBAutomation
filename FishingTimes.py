@@ -1,4 +1,5 @@
-from pandas import read_html
+import requests
+from pandas import read_html, isna
 
 
 def fishing():
@@ -20,52 +21,44 @@ def fishing():
 
 
 def tides():
+	# Annoying website, need to pretend to be a browser
+	header = {
+		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
+		"X-Requested-With": "XMLHttpRequest"
+	}
 
-	tide_times = read_html('https://www.tide-forecast.com/locations/Dublin-Ireland/forecasts/latest/six_day')[0]
+	# tide_times = read_html('https://www.tide-forecast.com/locations/Dublin-Ireland/forecasts/latest/six_day')[0]
+	tide_times = 'https://www.tideschart.com/Ireland/Leinster/Dublin-City/Dublin/Weekly/'
 
-	return tide_times
+	r = requests.get(tide_times, headers=header)
+
+	return read_html(r.text)[0]
 
 
 def main():
 	fish_dict = fishing()
 	tide_table = tides()
 
-	# 3 entries are returned for each day
-	# init a list to store days that
-	# have already been used
-	days_l = []
+	for i in range(6):
+		entry = fish_dict[i]
 
-	x = ""
-	# Count needed here
-	# to stop duplicates
-	count = 0
-	for i in range(1, 19):
-		day = tide_table[i][2]
+		t1, t2, t3= tide_table.values[i][1], tide_table.values[i][2], tide_table.values[i][3]
+		t4 = tide_table.values[i][4] if not isna(tide_table.values[i][4]) else ""
 
-		if day not in days_l:
-			days_l.append(day)
+		_t1 = t1[:5]
+		_t2 = t2[:5]
+		_t3 = t3[:5]
 
-			entry = fish_dict[count]
-			try:
-				# underline date
-				x += f"\n\033[4m{entry[:11]}\033[0m{entry[11:]}"
-				count += 1
-			except KeyError:
-				break
-		# High tide and low tide
-		x += f"{tide_table[i][5]}m\n{tide_table[i][6]}m\n"
+		_t4 = t3[:5] if not t4 == "" else ""
 
-	# tide td on website may not have
-	# an entry for either low or high tide (i.e. nan entry)
-	# so regex them out
-	x = x.replace('nanm', '')
-
-	print(x)
+		# underline date
+		print(f"\033[4m{entry[:11]}\033[0m{entry[11:]}")
+		print(f"\n\033[4mTides:\033[0m\n{_t1} {t1[8:]}\n{_t2} {t2[8:]}\n{_t3} {t3[8:]}\n{_t4} {t4}\n")
 
 
 if __name__ == '__main__':
 	main()
-
+	# tides()
 
 # 1                                        Change units
 # 2                                                 NaN
