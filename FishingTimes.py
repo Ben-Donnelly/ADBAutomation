@@ -49,11 +49,11 @@ def main():
 		_t2 = t2[:5]
 		_t3 = t3[:5]
 
-		_t4 = t3[:5] if not t4 == "" else ""
+		_t4 = t4[:5] if not t4 == "" else ""
 
 		# underline date
 		print(f"\033[4m{entry[:11]}\033[0m{entry[11:]}")
-		print(f"\n\033[4mTides:\033[0m\n{_t1} {t1[8:]}\n{_t2} {t2[8:]}\n{_t3} {t3[8:]}\n{_t4} {t4}\n")
+		print(f"\n\033[4mTides:\033[0m\n{_t1} {t1[8:]}\n{_t2} {t2[8:]}\n{_t3} {t3[8:]}\n{_t4} {t4[8:]}\n")
 
 
 if __name__ == '__main__':
