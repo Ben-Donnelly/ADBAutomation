@@ -6,12 +6,12 @@ def fishing():
 	fishing_times = read_html('https://www.fishingreminder.com/IE/charts/fishing_times/Dublin')[0]
 
 	# Create dict for bite times
-	bite_reference = {}
+	bite_ref = {}
 	for i in range(7):
 		day, mabt, mibt = fishing_times.values[i][0], fishing_times.values[i][2], fishing_times.values[i][3]
-		bite_reference[i] = f"{day}\nMajor bite times: {mabt}\nMinor bite times: {mibt}\n"
+		bite_ref[i] = f"{day}\nMajor bite times: {mabt}\nMinor bite times: {mibt}\n"
 
-	return bite_reference
+	return bite_ref
 
 
 def tides():
@@ -23,31 +23,33 @@ def tides():
 			"XMLHttpRequest"
 	}
 
-	# tide_times = read_html('https://www.tide-forecast.com/locations/Dublin-Ireland/forecasts/latest/six_day')[0]
 	tide_times = 'https://www.tideschart.com/Ireland/Leinster/Dublin-City/Dublin/Weekly/'
 
-	r = requests.get(tide_times, headers=header)
+	tide_table = read_html(requests.get(tide_times, headers=header).text)[0]
 
-	return read_html(r.text)[0]
-
-
-def main():
-	fish_dict = fishing()
-	tide_table = tides()
-
+	tide_ref = {}
 	for i in range(7):
-		entry = fish_dict[i]
-
 		t1, t2, t3 = tide_table.values[i][1], tide_table.values[i][2], tide_table.values[i][3]
 
 		# Deals with NaN value if a day only has 3 tides
 		t4 = tide_table.values[i][4] if not isna(tide_table.values[i][4]) else ""
 
-		# underline date
-		print(f"\033[4m{entry[:11]}\033[0m{entry[11:]}")
+		# index doesnt care if a line is blank, just outputs blank, also underline "Tides"
+		tide_ref[i] = f"\033[4mTides:\033[0m\n{t1[:5]} {t1[8:]}\n{t2[:5]} {t2[8:]}\n{t3[:5]} {t3[8:]}\n{t4[:5]} {t4[8:]}"
 
-		# index doesnt care if a line is blank, just outputs blank
-		print(f"\033[4mTides:\033[0m\n{t1[:5]} {t1[8:]}\n{t2[:5]} {t2[8:]}\n{t3[:5]} {t3[8:]}\n{t4[:5]} {t4[8:]}\n\n")
+	return tide_ref
+
+
+def main():
+	fish_dict = fishing()
+	tide_dict = tides()
+
+	for i in range(7):
+		f_entry = fish_dict[i]
+		t_entry = tide_dict[i]
+
+		# underline
+		print(f"\033[4m{f_entry[:11]}\033[0m{f_entry[11:]}\n{t_entry}\n\n")
 
 
 if __name__ == '__main__':
