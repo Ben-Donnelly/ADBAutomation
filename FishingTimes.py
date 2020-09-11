@@ -1,15 +1,29 @@
 import requests
 from pandas import read_html, isna
+from bs4 import BeautifulSoup
+import re
 
 
 def fishing():
 	fishing_times = read_html('https://www.fishingreminder.com/IE/charts/fishing_times/Dublin')[0]
+	data = requests.get('https://www.fishingreminder.com/IE/charts/fishing_times/Dublin')
+	soup = BeautifulSoup(data.text, 'html.parser')
+
+	# x = soup.find_all('tr', {"class": re.compile("^forecastrow weekday rating_\d$")})
+	x = soup.find_all('tr')
+	l = []
+	for i in range(1, len(x)):
+		l.append(x[i].attrs['class'][2][-1:])
+	# raise SystemExit
+	#
+	# result = x.search( )
+	# matchedText = result.groups()[0]
 
 	# Create dict for bite times
 	bite_ref = {}
 	for i in range(7):
 		day, mabt, mibt = fishing_times.values[i][0], fishing_times.values[i][2], fishing_times.values[i][3]
-		bite_ref[i] = f"{day}\nMajor bite times: {mabt}\nMinor bite times: {mibt}\n"
+		bite_ref[i] = f"{day} ({l[i]}/4)\nMajor bite times: {mabt}\nMinor bite times: {mibt}\n"
 
 	return bite_ref
 
